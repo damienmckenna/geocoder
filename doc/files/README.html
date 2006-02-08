@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: README</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>README</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>README
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Wed Feb 08 14:58:01 CST 2006</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1><a href="../classes/Geocoder.html">Geocoder</a>: Geocoding library for Ruby and command-line utility</h1>
+<table>
+<tr><td valign="top">Author:</td><td>Paul Smith &lt;paul@cnt.org&gt;
+
+</td></tr>
+<tr><td valign="top">License:</td><td>MIT
+
+</td></tr>
+</table>
+<p>
+<a href="../classes/Geocoder.html">Geocoder</a> helps in converting street
+addresses to coordinate pairs, specifically latitude and longitude (in
+degrees decimal). It also provides address normalization.
+</p>
+<p>
+It comes with a library so that Ruby developers can include geocoding in
+their applications. It also comes with a command-line application,
+<tt>geocode</tt>, that is useful for one-offs, shell scripts, and non-Ruby
+applications.
+</p>
+<h2>How it works</h2>
+<p>
+The <a href="../classes/Geocoder.html">Geocoder</a> is basically a wrapper
+for geocoding web services. Currently, two services are utilized: <a
+href="http://developer.yahoo.net/maps/rest/V1/geocode.html">Yahoo! Maps
+Geocoding API</a>, which is an interface to their proprietary geocoding
+system; and <a href="http://www.geocoder.us">Geocoder.us</a>, which is
+basically a Perl frontend to the TIGER/Line file from the US Census Bureau.
+</p>
+<p>
+Unless the user or developer indicates otherwise, the Yahoo! Maps API is
+used by default.
+</p>
+<h2>Example: library</h2>
+<p>
+If you are going to use this library with the Yahoo! Maps Geocoding
+service, you need to get yourself an <a
+href="http://developer.yahoo.net/faq/index.html#appid">Application ID</a>.
+</p>
+<p>
+The very simplest use of the library would just instantiate a <a
+href="../classes/Geocoder.html">Geocoder</a> object and call the
+<tt>geocode</tt> method, grab the result, and get the values directly:
+</p>
+<pre>
+  require 'lib/geocoder'
+  geocoder = Geocoder::Yahoo.new &quot;my_app_id&quot; # =&gt; #&lt;Geocoder::Yahoo:0x36b77c @appid=&quot;my_app_id&quot;&gt;
+  result = geocoder.geocode &quot;1600 pennsylvania ave nw washington dc&quot;
+  result.lat # =&gt; &quot;38.8987&quot;
+  result.lng # =&gt; &quot;-77.037223&quot;
+  result.address # =&gt; &quot;1600 PENNSYLVANIA AVE NW&quot;
+  result.city # =&gt; &quot;WASHINGTON&quot;
+  result.state # =&gt; &quot;DC&quot;
+  result.zip # =&gt; &quot;20502-0001&quot;
+</pre>
+<p>
+The result that the <tt>geocode</tt> method returns is a subclass of Array;
+each element contains the &quot;closest match&quot; for ambiguous
+addresses, as determined by the remote geocoding service.
+</p>
+<p>
+Any sort of production-level code would want to check for success and watch
+for exceptions. Geocoding is an inexact science, so you would want to check
+for success, and iterate over the refinements or closest matches that the
+service returns:
+</p>
+<pre>
+  require 'lib/geocoder'
+  geocoder = Geocoder::Yahoo.new &quot;my_app_id&quot; # =&gt; #&lt;Geocoder::Yahoo:0x36ae44 @appid=&quot;my_app_id&quot;&gt;
+  result = geocoder.geocode &quot;2038 damen ave chicago il&quot;
+  result.success? # =&gt; false
+  result.each do |r|
+    r.lat # =&gt; &quot;41.854524&quot;, &quot;41.918759&quot;
+    r.lng # =&gt; &quot;-87.676083&quot;, &quot;-87.67763&quot;
+    r.address # =&gt; &quot;2038 S DAMEN AVE&quot;, &quot;2038 N DAMEN AVE&quot;
+    r.city # =&gt; &quot;CHICAGO&quot;, &quot;CHICAGO&quot;
+    r.state # =&gt; &quot;IL&quot;, &quot;IL&quot;
+    r.zip # =&gt; &quot;60608-2625&quot;, &quot;60647-4564&quot;
+  end
+</pre>
+<p>
+<tt>success?</tt> is defined by a single result returned from the geocoding
+service (and in the case of the Y! API, with no warning)
+</p>
+<pre>
+  require 'lib/geocoder'
+  geocoder = Geocoder::Yahoo.new &quot;my_app_id&quot;
+  begin
+    result = geocoder.geocode &quot;thisisnotreal&quot;
+  rescue Geocoder::GeocodingError
+    # do something appropriate to your application here
+  end
+</pre>
+<p>
+The <a href="../classes/Geocoder.html">Geocoder</a> module defines 2
+exception classes:
+</p>
+<ol>
+<li>BlankLocationString, thrown if a nil or a empty String is given to the
+geocode method;
+
+</li>
+<li>GeocodingError, thrown if the remote service indicates an error, for
+instance, on an ungeocodeable location
+
+</li>
+</ol>
+<h2>Example: command-line utility</h2>
+<pre>
+  % geocode 2125 W North Ave, Chicago IL
+  Found 1 result(s).
+  ------------------
+  Latitude: 41.910263
+  Longitude: -87.680696
+  Address: 2125 W NORTH AVE
+  City: CHICAGO
+  State: IL
+  ZIP Code: 60647-5415
+</pre>
+<p>
+Notice that the geocoder normalizes the address, including city, state, and
+ZIP Code.
+</p>
+<p>
+You can also throw some switches on it. Try <tt>-q</tt> for quieter, CSV
+output:
+</p>
+<pre>
+  % geocode -q 1600 pennsylvania ave nw washington dc
+  38.8987,-77.037223,1600 PENNSYLVANIA AVE NW,WASHINGTON,DC,20502-0001
+</pre>
+<p>
+The order of the fields in the CSV output is:
+</p>
+<ol>
+<li>latitude (degrees decimal)
+
+</li>
+<li>longitude (degrees decimal)
+
+</li>
+<li>street address
+
+</li>
+<li>city
+
+</li>
+<li>state
+
+</li>
+<li>ZIP Code
+
+</li>
+</ol>
+<h2>Usage: command-line utility</h2>
+<pre>
+  % geocode -h
+  Options:
+      -a, --appid appid                Yahoo! Application ID
+      -s, --service service            `yahoo' or `geocoderus'
+      -t, --timeout secs               Timeout in seconds
+      -q, --quiet                      Quiet output
+      -h, --help                       Show this message
+</pre>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

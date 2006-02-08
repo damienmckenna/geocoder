@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Geocoder::Cli</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Geocoder::Cli</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../files/lib/geocoder_rb.html">
+                lib/geocoder.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000004">go!</a>&nbsp;&nbsp;
+      <a href="#M000002">new</a>&nbsp;&nbsp;
+      <a href="#M000001">parse</a>&nbsp;&nbsp;
+      <a href="#M000003">report</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000002" class="method-detail">
+        <a name="M000002"></a>
+
+        <div class="method-heading">
+          <a href="#M000002" class="method-signature">
+          <span class="method-name">new</span><span class="method-args">(cli_args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000002-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000002-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/geocoder.rb, line 283</span>
+283:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span> <span class="ruby-identifier">cli_args</span>
+284:       <span class="ruby-ivar">@options</span>, <span class="ruby-ivar">@opt_parser</span> = <span class="ruby-constant">Cli</span><span class="ruby-operator">::</span><span class="ruby-identifier">parse</span> <span class="ruby-identifier">cli_args</span>
+285:       <span class="ruby-ivar">@location</span> = <span class="ruby-identifier">cli_args</span>.<span class="ruby-identifier">join</span> <span class="ruby-value str">&quot; &quot;</span>
+286:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000001" class="method-detail">
+        <a name="M000001"></a>
+
+        <div class="method-heading">
+          <a href="#M000001" class="method-signature">
+          <span class="method-name">parse</span><span class="method-args">(args)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000001-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000001-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/geocoder.rb, line 252</span>
+252:     <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">parse</span> <span class="ruby-identifier">args</span>
+253:       <span class="ruby-identifier">options</span> = <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>
+254:       <span class="ruby-comment cmt"># default values</span>
+255:       <span class="ruby-identifier">options</span>.<span class="ruby-identifier">appid</span> = <span class="ruby-value str">&quot;YahooDemo&quot;</span>
+256:       <span class="ruby-identifier">options</span>.<span class="ruby-identifier">service</span> = <span class="ruby-constant">Yahoo</span>
+257:       <span class="ruby-identifier">options</span>.<span class="ruby-identifier">timeout</span> = <span class="ruby-value">5</span>
+258:       <span class="ruby-identifier">opts</span> = <span class="ruby-constant">OptionParser</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">opts</span><span class="ruby-operator">|</span>
+259:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">banner</span> = <span class="ruby-value str">&quot;Usage: geocode [options] location&quot;</span>
+260:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">separator</span> <span class="ruby-value str">&quot;&quot;</span>
+261:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">separator</span> <span class="ruby-value str">&quot;Options:&quot;</span>
+262:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on</span> <span class="ruby-value str">&quot;-a appid&quot;</span>, <span class="ruby-value str">&quot;--appid appid&quot;</span>, <span class="ruby-value str">&quot;Yahoo! Application ID&quot;</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span>
+263:           <span class="ruby-identifier">options</span>.<span class="ruby-identifier">appid</span> = <span class="ruby-identifier">a</span>
+264:         <span class="ruby-keyword kw">end</span>
+265:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on</span> <span class="ruby-value str">&quot;-s service&quot;</span>, <span class="ruby-value str">&quot;--service service&quot;</span>, <span class="ruby-value str">&quot;`yahoo' or `geocoderus'&quot;</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span>
+266:           <span class="ruby-identifier">options</span>.<span class="ruby-identifier">service</span> = <span class="ruby-constant">SERVICES</span>[<span class="ruby-identifier">s</span>]
+267:         <span class="ruby-keyword kw">end</span>
+268:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on</span> <span class="ruby-value str">&quot;-t secs&quot;</span>, <span class="ruby-value str">&quot;--timeout secs&quot;</span>, <span class="ruby-constant">Integer</span>, <span class="ruby-value str">&quot;Timeout in seconds&quot;</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">t</span><span class="ruby-operator">|</span>
+269:           <span class="ruby-identifier">options</span>.<span class="ruby-identifier">timeout</span> = <span class="ruby-identifier">t</span>
+270:         <span class="ruby-keyword kw">end</span>
+271:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on</span> <span class="ruby-value str">&quot;-q&quot;</span>, <span class="ruby-value str">&quot;--quiet&quot;</span>, <span class="ruby-value str">&quot;Quiet output&quot;</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">q</span><span class="ruby-operator">|</span>
+272:           <span class="ruby-identifier">options</span>.<span class="ruby-identifier">quiet</span> = <span class="ruby-identifier">q</span>
+273:         <span class="ruby-keyword kw">end</span>
+274:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">on_tail</span> <span class="ruby-value str">&quot;-h&quot;</span>, <span class="ruby-value str">&quot;--help&quot;</span>, <span class="ruby-value str">&quot;Show this message&quot;</span> <span class="ruby-keyword kw">do</span>
+275:           <span class="ruby-identifier">puts</span> <span class="ruby-identifier">opts</span>
+276:           <span class="ruby-identifier">exit</span>
+277:         <span class="ruby-keyword kw">end</span>
+278:         <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">parse!</span> <span class="ruby-identifier">args</span>
+279:       <span class="ruby-keyword kw">end</span>
+280:       [<span class="ruby-identifier">options</span>, <span class="ruby-identifier">opts</span>]
+281:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000004" class="method-detail">
+        <a name="M000004"></a>
+
+        <div class="method-heading">
+          <a href="#M000004" class="method-signature">
+          <span class="method-name">go!</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000004-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000004-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/geocoder.rb, line 308</span>
+308:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">go!</span>
+309:       <span class="ruby-identifier">g</span> = <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">service</span>.<span class="ruby-identifier">new</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">appid</span>
+310:       <span class="ruby-keyword kw">begin</span>
+311:         <span class="ruby-identifier">result</span> = <span class="ruby-identifier">g</span>.<span class="ruby-identifier">geocode</span> <span class="ruby-ivar">@location</span>, <span class="ruby-identifier">:timeout</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">timeout</span>
+312:         <span class="ruby-identifier">report</span> <span class="ruby-identifier">result</span>
+313:       <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">BlankLocationString</span>
+314:         <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;You have to give an address to geocode!&quot;</span>
+315:         <span class="ruby-identifier">puts</span>
+316:         <span class="ruby-identifier">puts</span> <span class="ruby-ivar">@opt_parser</span>
+317:         <span class="ruby-identifier">exit</span>
+318:       <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Timeout</span><span class="ruby-operator">::</span><span class="ruby-constant">Error</span>
+319:         <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;The remote geocoding service timed-out. Try increasing the timeout value (-t).&quot;</span>
+320:         <span class="ruby-identifier">exit</span>
+321:       <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Geocoder</span><span class="ruby-operator">::</span><span class="ruby-constant">GeocodingError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+322:         <span class="ruby-constant">STDERR</span>.<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Geocoder: #{e}&quot;</span>
+323:         <span class="ruby-identifier">exit</span>
+324:       <span class="ruby-keyword kw">end</span>
+325:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000003" class="method-detail">
+        <a name="M000003"></a>
+
+        <div class="method-heading">
+          <a href="#M000003" class="method-signature">
+          <span class="method-name">report</span><span class="method-args">(result)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000003-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000003-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/geocoder.rb, line 288</span>
+288:     <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">report</span> <span class="ruby-identifier">result</span>
+289:       <span class="ruby-identifier">buffer</span> = []
+290:       <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">quiet</span>
+291:         <span class="ruby-identifier">result</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span>
+292:           <span class="ruby-identifier">buffer</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">FIELDS</span>.<span class="ruby-identifier">collect</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+293:             <span class="ruby-identifier">r</span>.<span class="ruby-identifier">send</span> <span class="ruby-identifier">k</span>
+294:           <span class="ruby-keyword kw">end</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;,&quot;</span>)
+295:         <span class="ruby-keyword kw">end</span>
+296:       <span class="ruby-keyword kw">else</span>
+297:         <span class="ruby-identifier">buffer</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;Found #{result.size} result(s).&quot;</span>
+298:         <span class="ruby-identifier">buffer</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">buffer</span>.<span class="ruby-identifier">last</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp re">/./</span>, <span class="ruby-value str">&quot;-&quot;</span>)
+299:         <span class="ruby-identifier">buffer</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">collect</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span>
+300:           <span class="ruby-constant">FIELDS</span>.<span class="ruby-identifier">collect</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+301:             <span class="ruby-node">&quot;#{v}: #{r.send k}&quot;</span>
+302:           <span class="ruby-keyword kw">end</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n&quot;</span>)
+303:         <span class="ruby-keyword kw">end</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n- - - -\n&quot;</span>)
+304:       <span class="ruby-keyword kw">end</span>
+305:       <span class="ruby-identifier">puts</span> <span class="ruby-identifier">buffer</span>.<span class="ruby-identifier">join</span>(<span class="ruby-value str">&quot;\n&quot;</span>)
+306:     <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

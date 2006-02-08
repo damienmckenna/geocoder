@@ -1,0 +1,122 @@
+= Geocoder: Geocoding library for Ruby and command-line utility
+
+Author:: Paul Smith <paul@cnt.org>
+License:: MIT
+
+Geocoder helps in converting street addresses to coordinate pairs,
+specifically latitude and longitude (in degrees decimal). It also
+provides address normalization.
+
+It comes with a library so that Ruby developers can include geocoding
+in their applications. It also comes with a command-line application,
+<tt>geocode</tt>, that is useful for one-offs, shell scripts, and non-Ruby
+applications.
+
+== How it works
+
+The Geocoder is basically a wrapper for geocoding web services.
+Currently, two services are utilized: {Yahoo! Maps Geocoding
+API}[http://developer.yahoo.net/maps/rest/V1/geocode.html], which
+is an interface to their proprietary geocoding system; and
+Geocoder.us[http://www.geocoder.us], which is basically a Perl
+frontend to the TIGER/Line file from the US Census Bureau.
+
+Unless the user or developer indicates otherwise, the Yahoo! Maps
+API is used by default.
+
+== Example: library
+
+If you are going to use this library with the Yahoo! Maps Geocoding
+service, you need to get yourself an {Application
+ID}[http://developer.yahoo.net/faq/index.html#appid].
+
+The very simplest use of the library would just instantiate a
+Geocoder object and call the <tt>#geocode</tt> method, grab the
+result, and get the values directly:
+
+  require 'geocoder'
+  geocoder = Geocoder::Yahoo.new "my_app_id" # => #<Geocoder::Yahoo:0x36b77c @appid="my_app_id">
+  result = geocoder.geocode "1600 pennsylvania ave nw washington dc"
+  result.lat # => "38.8987"
+  result.lng # => "-77.037223"
+  result.address # => "1600 PENNSYLVANIA AVE NW"
+  result.city # => "WASHINGTON"
+  result.state # => "DC"
+  result.zip # => "20502-0001"
+
+The result that the <tt>geocode</tt> method returns is a subclass
+of Array; each element contains the "closest match" for ambiguous
+addresses, as determined by the remote geocoding service.
+
+Any sort of production-level code would want to check for success
+and watch for exceptions. Geocoding is an inexact science, so you
+would want to check for success, and iterate over the refinements
+or closest matches that the service returns:
+
+  require 'geocoder'
+  geocoder = Geocoder::Yahoo.new "my_app_id" # => #<Geocoder::Yahoo:0x36ae44 @appid="my_app_id">
+  result = geocoder.geocode "2038 damen ave chicago il"
+  result.success? # => false
+  result.each do |r|
+    r.lat # => "41.854524", "41.918759"
+    r.lng # => "-87.676083", "-87.67763"
+    r.address # => "2038 S DAMEN AVE", "2038 N DAMEN AVE"
+    r.city # => "CHICAGO", "CHICAGO"
+    r.state # => "IL", "IL"
+    r.zip # => "60608-2625", "60647-4564"
+  end
+
+<tt>#success?</tt> is defined by a single result returned from the
+geocoding service (and in the case of the Y! API, with no warning)
+
+  require 'geocoder'
+  geocoder = Geocoder::Yahoo.new "my_app_id"
+  begin
+    result = geocoder.geocode "thisisnotreal"
+  rescue Geocoder::GeocodingError
+    # do something appropriate to your application here
+  end
+
+The Geocoder module defines 2 exception classes:
+
+1. BlankLocationString, thrown if a nil or a empty String is given to the geocode method;
+2. GeocodingError, thrown if the remote service indicates an error, for instance, on an ungeocodeable location
+
+== Example: command-line utility
+
+  % geocode 2125 W North Ave, Chicago IL
+  Found 1 result(s).
+  ------------------
+  Latitude: 41.910263
+  Longitude: -87.680696
+  Address: 2125 W NORTH AVE
+  City: CHICAGO
+  State: IL
+  ZIP Code: 60647-5415
+
+Notice that the geocoder normalizes the address, including city,
+state, and ZIP Code.
+
+You can also throw some switches on it. Try <tt>-q</tt> for quieter, CSV output:
+
+  % geocode -q 1600 pennsylvania ave nw washington dc
+  38.8987,-77.037223,1600 PENNSYLVANIA AVE NW,WASHINGTON,DC,20502-0001
+
+The order of the fields in the CSV output is:
+
+1. latitude (degrees decimal)
+2. longitude (degrees decimal)
+3. street address
+4. city
+5. state
+6. ZIP Code
+
+== Usage: command-line utility
+
+  % geocode -h
+  Options:
+      -a, --appid appid                Yahoo! Application ID
+      -s, --service service            `yahoo' or `geocoderus'
+      -t, --timeout secs               Timeout in seconds
+      -q, --quiet                      Quiet output
+      -h, --help                       Show this message

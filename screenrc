@@ -1,0 +1,8 @@
+screen 0 bash -c "vim lib/geocoder.rb; bash"
+title "vim"
+screen 1 bash -c "rake; bash"
+title "tests"
+screen 2 bash -c "irb -rlib/geocoder; bash"
+title "irb"
+screen 3 bash
+title "bash"
