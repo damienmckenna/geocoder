@@ -2,7 +2,7 @@ require 'rake/rdoctask'
 require 'rake/gempackagetask'
 require 'rubygems'
 
-GEOCODER_VERSION = "0.1.0"
+GEOCODER_VERSION = "0.1.0a"
 
 PKG_FILES = FileList["lib/**/*", "bin/**/*", "[A-Z]*",
   "test/**/*"].exclude(/\b\.svn\b/)
@@ -29,6 +29,7 @@ spec = Gem::Specification.new do |s|
   s.require_path = "lib"
   s.author = "Paul Smith"
   s.files = PKG_FILES
+  s.autorequire = "geocoder"
   s.email = "paul@cnt.org"
   s.rubyforge_project = "geocoder"
   s.homepage = "http://geocoder.rubyforge.org"
@@ -39,4 +40,14 @@ end
 Rake::GemPackageTask.new(spec) do |pkg|
   pkg.need_zip = true
   pkg.need_tar = true
+end
+
+desc "Install local gem"
+task :install => [ :repackage ] do
+  sh "sudo gem install -l pkg/geocoder-#{GEOCODER_VERSION}.gem"
+end
+
+desc "Uninstall gem"
+task :uninstall do
+  sh "sudo gem uninstall geocoder"
 end

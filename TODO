@@ -5,6 +5,6 @@ Send suggestions to Paul Smith <paul@cnt.org>.
 * unit tests for CLI
 * many more tests of known and unknown addresses
 * caching
-* more services (c'mon, Google!)
+* more services (c'mon, Google!) [Ontok?]
 * Rails plugin
 * option to "average" results from more than one service
