@@ -2,7 +2,7 @@ require 'rake/rdoctask'
 require 'rake/gempackagetask'
 require 'rubygems'
 
-GEOCODER_VERSION = "0.1.0a"
+GEOCODER_VERSION = "0.1.1"
 
 PKG_FILES = FileList["lib/**/*", "bin/**/*", "[A-Z]*",
   "test/**/*"].exclude(/\b\.svn\b/)
