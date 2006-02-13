@@ -30,7 +30,6 @@ require 'timeout'
 
 module Geocoder
 
-  class BlankLocationString < Exception; end
   class GeocodingError < Exception; end
 
   FIELDS = [ ["latitude", "Latitude"],
@@ -52,16 +51,8 @@ module Geocoder
       options = { :timeout => nil }
       options.update(args.pop) if args.last.is_a?(Hash)
       @options = options
-      if location.nil? or location.empty?
-        raise BlankLocationString
-      end
       location = String location
-      results = parse request(location)
-      create_response results
-    end
-          
-    def create_response results
-      Response.new results
+      response = parse request(location)
     end
 
     # Makes an HTTP GET request on URL and returns the body
@@ -89,7 +80,9 @@ module Geocoder
 
     def parse csv_text
       if csv_text =~ /^2: /
-        raise GeocodingError, csv_text.split(": ")[1]
+        return Response.new(GeocodingError.new(csv_text.split(": ")[1]))
+      elsif csv_text =~ /please supply an address/
+        return Response.new(GeocodingError.new(["please supply an address"]))
       end
       results = []
       csv_text.split("\n").each do |line|
@@ -103,7 +96,7 @@ module Geocoder
         result.zip = zip
         results << result
       end
-      results
+      response = Response.new results
     end
 
     # Returns URL of geocoder.us web service
@@ -132,9 +125,9 @@ module Geocoder
       # root node <Error>
       if is_error? xml
         msgs = []
-        # Bubble up an exception using the error messages from Y!
         xml.root.elements.each("Message") { |e| msgs << e.get_text.value }
-        raise GeocodingError, msgs.join(", ")
+        response = Response.new GeocodingError.new(msgs)
+        return response
       else
         results = []
         xml.root.elements.each "Result" do |e|
@@ -152,7 +145,7 @@ module Geocoder
           end
           results << result
         end
-        results
+        response = Response.new results
       end
     end
 
@@ -177,11 +170,19 @@ module Geocoder
   SERVICES = { :yahoo => Yahoo,
                :geocoderus => GeoCoderUs }.freeze
 
+  class GeocodingError
+    attr_accessor :reasons
+    def initialize reasons=[]
+      @reasons = reasons
+    end
+  end
+
   class Result < Struct.new :latitude, :longitude, :address, :city,
                             :state, :zip, :country, :precision,
                             :warning
     alias :lat :latitude
     alias :lng :longitude
+    alias :street :address
   end
 
   # A Response is a representation of the entire response from the
@@ -189,15 +190,28 @@ module Geocoder
   # as well as warnings and errors
   class Response < Array
     def initialize results
-      results.each do |result|
-        self << result
+      if results.is_a? GeocodingError
+        @success = false
+        @error = true
+        @reasons = results.reasons
+      else
+        @success = true
+        results.each do |result|
+          self << result
+        end
       end
     end
 
-    # Geocoding was an unqualified success if one result in the result 
-    # set is retured and there is no warning attribute in that result
     def success?
-      size == 1 and self[0].warning.nil?
+      @success and self[0].warning.nil?
+    end
+
+    def error?
+      @error
+    end
+
+    def reasons
+      @reasons
     end
 
     def bullseye?
@@ -243,6 +257,7 @@ module Geocoder
 
     alias :lat :latitude
     alias :lng :longitude
+    alias :street :address
   end
 
   class Cli

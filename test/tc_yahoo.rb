@@ -42,6 +42,11 @@ class TC_YahooGeocoderSuccess < Test::Unit::TestCase
     assert_equal "US", @response.country
   end
 
+  def test_street
+    assert_respond_to @response, :street
+    assert_same @response.street, @response.address
+  end
+
   def test_lat
     assert_respond_to @response, :lat
     assert_same @response.lat, @response.latitude
@@ -83,28 +88,31 @@ class TC_YahooGeocoderAmbiguous < Test::Unit::TestCase
   end
 end
 
-class TC_YahooGeocoderExceptions < Test::Unit::TestCase
+class TC_YahooGeocoderErrors < Test::Unit::TestCase
   include Geocoder
 
   def setup
     @geocoder = Yahoo.new "YahooDemo"
   end
 
-  def test_throws_on_nil
-    assert_raise(Geocoder::BlankLocationString) {
-      @geocoder.geocode nil
-    }
+  def test_nil_location
+    @response = @geocoder.geocode nil
+    assert !@response.success?
+    assert @response.error?
+    assert_equal "unable to parse location", @response.reasons[0]
   end
   
-  def test_throws_on_empty_string
-    assert_raise(Geocoder::BlankLocationString) {
-      @geocoder.geocode ""
-    }
+  def test_empty_string_location
+    @response = @geocoder.geocode ""
+    assert !@response.success?
+    assert @response.error?
+    assert_equal "unable to parse location", @response.reasons[0]
   end
   
   def test_throws_on_ungeocodeable
-    assert_raise(Geocoder::GeocodingError) {
-      @geocoder.geocode "donotleaveitisnotreal"
-    }
+    @response = @geocoder.geocode "donotleaveitisnotreal"
+    assert !@response.success?
+    assert @response.error?
+    assert_equal "unable to parse location", @response.reasons[0]
   end
 end

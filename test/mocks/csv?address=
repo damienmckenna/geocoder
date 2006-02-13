@@ -1,0 +1,10 @@
+city:  state:  zip:  please supply an address as ?address=[address]<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>200 OK</title>
+</head><body>
+<h1>OK</h1>
+<p>Your browser sent a request that this server could not understand.<br />
+</p>
+<hr>
+<address>Apache/2.0.52 (Fedora) Server at rpc.geocoder.us Port 80</address>
+</body></html>

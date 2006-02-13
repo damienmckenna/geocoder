@@ -58,7 +58,7 @@ class TC_GeoCoderUsAmbiguous < Test::Unit::TestCase
   end
 
   def test_success
-    assert_equal false, @response.success?
+    assert_equal true, @response.success?
   end
 
   def test_matches
@@ -78,28 +78,28 @@ class TC_GeoCoderUsAmbiguous < Test::Unit::TestCase
   end
 end
 
-class TC_GeoCoderUsExceptions < Test::Unit::TestCase
+class TC_GeoCoderUsErrors < Test::Unit::TestCase
   include Geocoder
 
   def setup
     @geocoder = GeoCoderUs.new
   end
 
-  def test_throws_on_nil
-    assert_raise(Geocoder::BlankLocationString) {
-      @geocoder.geocode nil
-    }
+  def test_nil_location
+    @response = @geocoder.geocode nil
+    assert !@response.success?
+    assert @response.error?
   end
   
-  def test_throws_on_empty_string
-    assert_raise(Geocoder::BlankLocationString) {
-      @geocoder.geocode ""
-    }
+  def test_empty_string_location
+    @response = @geocoder.geocode ""
+    assert !@response.success?
+    assert @response.error?
   end
-
+  
   def test_throws_on_ungeocodeable
-    assert_raise(Geocoder::GeocodingError) {
-      @geocoder.geocode "donotleaveitisnotreal"
-    }
+    @response = @geocoder.geocode "donotleaveitisnotreal"
+    assert !@response.success?
+    assert @response.error?
   end
 end
