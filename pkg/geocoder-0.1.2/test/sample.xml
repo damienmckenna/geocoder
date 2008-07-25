@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?><ResultSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:yahoo:maps" xsi:schemaLocation="urn:yahoo:maps http://api.local.yahoo.com/MapsService/V1/GeocodeResponse.xsd"><Result precision="address"><Latitude>41.910263</Latitude><Longitude>-87.680696</Longitude><Address>2125 W NORTH AVE</Address><City>CHICAGO</City><State>IL</State><Zip>60647-5415</Zip><Country>US</Country></Result></ResultSet>
+<!-- ws02.search.re2.yahoo.com uncompressed Wed Jan 25 14:06:31 PST 2006 -->

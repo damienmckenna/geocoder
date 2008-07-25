@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require 'geocoder'
+cli = Geocoder::Cli.new ARGV
+cli.go!
